@@ -7,18 +7,18 @@ fn parse_html_to_ast(html: &str) -> Html {
 }
 
 fn print_ast(element: scraper::ElementRef, depth: usize) {
-    let indent = "  ".repeat(depth);
-    println!("{}<{}>", indent, element.value().name());
+    // let indent = "  ".repeat(depth);
+    println!("<{}>", element.value().name());
 
     for (name, value) in element.value().attrs() {
-        println!("{}  Attribute: {}=\"{}\"", indent, name, value);
+        println!(" Attribute: {}=\"{}\"",  name, value);
     }
 
     for child in element.children() {
         if let Some(_element) = child.value().as_element() {
             print_ast(scraper::ElementRef::wrap(child).unwrap(), depth + 1);
         } else if let Some(text) = child.value().as_text() {
-            println!("{}  Text: {:?}", indent, text);
+            println!("  Text: {:?}", text);
         }
     }
 }
