@@ -7,7 +7,6 @@ fn parse_html_to_ast(html: &str) -> Html {
 }
 
 fn print_ast(element: scraper::ElementRef, depth: usize) {
-    // let indent = "  ".repeat(depth);
     println!("<{}>", element.value().name());
 
     for (name, value) in element.value().attrs() {
