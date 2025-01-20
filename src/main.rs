@@ -13,26 +13,38 @@ fn tokenizer(input:&str) -> Vec<Token>{
 
     while let Some(&token) = chars.peek(){
         if token == '<'{
-            chars.next();
+            chars.next().unwrap();
 
             if chars.peek() == Some(&'/'){
-                chars.next();
+                chars.next().unwrap();
 
                 let tag_name:String= chars.by_ref().take_while(|&token| token != '>').collect();
                 tokens.push(Token::EndTag(tag_name));
-                chars.next();
+                chars.next().unwrap();
+
             }else{
                 let tag_name:String = chars.by_ref().take_while(|&token| token != '>' && token != ' ').collect();
+                 
+                 if chars.peek()==Some(&'/'){
+                    chars.next().unwrap();
+
                 if chars.peek() == Some(&'>'){
                 tokens.push(Token::StartTag(tag_name));
-                chars.next();    
+                chars.next().unwrap();
+
                 }
+
+            }else if chars.peek()==Some(&'>'){
+                tokens.push(Token::StartTag(tag_name));
+                chars.next().unwrap();
+            }
             }
         }else{
-            let tag_name :String = chars.by_ref().take_while(|&tok| tok != '<').collect();
+            let tag_name :String = chars.by_ref().take_while(|&token| token != '<').collect();
             tokens.push(Token::Text(tag_name));
         }
     }
+
    tokens
 }
 
@@ -101,5 +113,32 @@ fn parser(tokens:&[Token])-> Node{
 
 fn main(){
 
+    let html = r#"
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+          <p> Hello world </p>
+        "#;
+    
+        let tokens = tokenizer(html);
+        // println!("Tokens: {:#?}", tokens);
+    
+        let ast = parser(&tokens);
+        println!("AST: {:#?}", ast);
 
 }
